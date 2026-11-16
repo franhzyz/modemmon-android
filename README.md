@@ -6,9 +6,13 @@ OrangePi Zero3).
 
 ## Скриншоты
 
-| Монитор сигнала | Forkop | Секции правил |
-|---|---|---|
-| ![Монитор](docs/screenshots/monitor.png) 
+| Монитор сигнала | RSRP (наведение антенны) |
+|---|---|
+| ![Монитор](docs/screenshots/monitor.png) | ![RSRP](docs/screenshots/rsrp.png) |
+
+| Forkop | Секции правил |
+|---|---|
+| ![Forkop](docs/screenshots/forkop.png) | ![Секции](docs/screenshots/sections.png) |
 
 ## Возможности
 
