@@ -8,7 +8,7 @@ OrangePi Zero3).
 
 | Монитор сигнала | Forkop | Секции правил |
 |---|---|---|
-| ![Монитор](docs/screenshots/monitor.png) | ![Forkop](docs/screenshots/forkop.png) | ![Секции](docs/screenshots/sections.png) |
+| ![Монитор](docs/screenshots/monitor.png) 
 
 ## Возможности
 
