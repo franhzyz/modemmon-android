@@ -1,7 +1,7 @@
-# ModemMon — монитор модема в OpenWrt
+# ModemMon — монитор модема и роутера в OpenWrt
 
-Android-приложение для наведения антенны и контроля модема, который стоит в
-роутере с OpenWrt (тестировалось под Foxconn T99W175, Snapdragon X55, QMI).
+Android-приложение для наведения антенны, контроля модема и управления
+роутером с OpenWrt (тестировалось под Foxconn T99W175, Snapdragon X55, QMI).
 Идея и набор экранов — по образцу [Hua4GMon](https://github.com/Sp0Xik/Hua4GMon),
 но источник данных не HiLink-API Huawei, а JSON-эндпоинт на самом роутере.
 
