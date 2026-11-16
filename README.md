@@ -10,10 +10,6 @@ OrangePi Zero3).
 |---|---|
 | ![Монитор](docs/screenshots/monitor.png) | ![RSRP](docs/screenshots/rsrp.png) |
 
-| Forkop | Секции правил |
-|---|---|
-| ![Forkop](docs/screenshots/forkop.png) | ![Секции](docs/screenshots/sections.png) |
-
 ## Возможности
 
 - Монитор сигнала: SINR/RSRP/RSRQ/RSSI, графики, пик сигнала
