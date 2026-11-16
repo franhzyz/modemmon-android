@@ -5,6 +5,13 @@ Android-приложение для наведения антенны и кон�
 Идея и набор экранов — по образцу [Hua4GMon](https://github.com/Sp0Xik/Hua4GMon),
 но источник данных не HiLink-API Huawei, а JSON-эндпоинт на самом роутере.
 
+
+## Требования
+
+Приложение работает только с пакетами из репозитория
+[https://github.com/Medvedolog/medvemodem](https://github.com/Medvedolog/medvemodem)
+(medvemodem, luci-app-forkop, sing-box-forkop и связанные пакеты).
+
 ```
 телефон ──HTTP──> OpenWrt (/cgi-bin/modem-telemetry) ──> mmcli + qmicli ──> модем
 ```
