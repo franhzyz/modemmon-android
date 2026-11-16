@@ -139,10 +139,23 @@ object Forkop {
             val rest = line.substring("forkop.".length)
             val eq = rest.indexOf('=')
             if (eq < 0) continue
-            val id = rest.substring(0, eq)
-            var key = rest.substring(0, eq).substringAfterLast('.', "")
-            var value = rest.substring(eq + 1)
-            if (key.isEmpty()) key = ".type"
+            val keyPart = rest.substring(0, eq)
+            val value = rest.substring(eq + 1)
+            // forkop.<id>=<type>  ИЛИ  forkop.<id>.<option>=<value>
+            // (id секции не содержит точек; id = до первой точки)
+            val dot = keyPart.indexOf('.')
+            val id: String
+            val key: String
+            if (dot < 0) {
+                id = keyPart
+                key = ".type"
+            } else {
+                id = keyPart.substring(0, dot)
+                key = keyPart.substring(dot + 1)
+            }
+            // продолжение multiline-значения содержит лишние точки в пути — пропускаем
+            if (dot >= 0 && keyPart.indexOf('.', dot + 1) >= 0) continue
+            if (value == "'") continue                       // начало multiline-значения
             // списки: 'a' 'b' — элементы в кавычках через пробел
             val items: List<String> = if (value.contains("' '")) {
                 value.split("' '").map { it.trim('\'') }.filter { it.isNotBlank() }
