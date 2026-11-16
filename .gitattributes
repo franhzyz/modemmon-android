@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.sh  text eol=lf
+gradlew text eol=lf
+openwrt/cgi-bin/modem text eol=lf
+*.bat text eol=crlf
+*.apk binary
+*.jar binary
+*.jks binary

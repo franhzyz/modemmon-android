@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "ts": 1793279632,
+  "rsrp": -75.00,
+  "rsrq": -8.00,
+  "sinr": 16.20,
+  "rssi": -48.00,
+  "network": "5G NSA",
+  "band": "B7",
+  "operator": "Tele2 RU",
+  "cell_id": 151208727,
+  "pci": 37,
+  "ca_active": false,
+  "temp_c": null,
+  "sim_slot": 0
+}

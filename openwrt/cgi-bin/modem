@@ -1,0 +1,14 @@
+#!/bin/sh
+# CGI-обёртка для uhttpd: GET /cgi-bin/modem -> JSON с состоянием модема.
+# Требует: /usr/bin/modem-collector.sh и права на запуск mmcli.
+
+printf 'Content-Type: application/json\r\n'
+printf 'Cache-Control: no-store, no-cache, must-revalidate\r\n'
+printf 'Access-Control-Allow-Origin: *\r\n'
+printf '\r\n'
+
+if [ -x /usr/bin/modem-collector.sh ]; then
+    /usr/bin/modem-collector.sh
+else
+    printf '{"online":false,"error":"modem-collector.sh not installed"}\n'
+fi

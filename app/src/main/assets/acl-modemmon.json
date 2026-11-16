@@ -1,0 +1,37 @@
+{
+	"modemmon": {
+		"description": "ModemMon: файлы, команды, сеть, iwinfo, wireguard",
+		"read": {
+			"file": {
+				"/proc/*": [ "read" ],
+				"/etc/config/*": [ "read" ],
+				"/etc/crontabs/*": [ "read" ],
+				"/etc/openwrt_release": [ "read" ],
+				"/tmp/*": [ "list", "read" ]
+			},
+			"ubus": {
+				"file": [ "read", "stat", "lstat" ],
+				"iwinfo": [ "devices", "info", "scan", "assoclist" ],
+				"luci.wireguard": [ "*" ],
+				"luci.amneziawg": [ "*" ]
+			}
+		},
+		"write": {
+			"file": {
+				"/bin/*": [ "exec" ],
+				"/sbin/*": [ "exec" ],
+				"/usr/bin/*": [ "exec" ],
+				"/usr/sbin/*": [ "exec" ],
+				"/etc/init.d/*": [ "exec" ],
+				"/etc/crontabs/*": [ "write" ],
+				"/etc/config/*": [ "write" ],
+				"/tmp/*": [ "write" ]
+			},
+			"ubus": {
+				"file": [ "exec", "write" ],
+				"network": [ "reload", "restart" ],
+				"network.interface.*": [ "up", "down", "renew" ]
+			}
+		}
+	}
+}
