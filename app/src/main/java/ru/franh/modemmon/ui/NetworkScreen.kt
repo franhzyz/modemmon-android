@@ -120,7 +120,7 @@ private fun UplinkBanner(state: UiState, vm: ModemViewModel) {
                 )
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
         return
     }
 
@@ -163,7 +163,7 @@ private fun UplinkBanner(state: UiState, vm: ModemViewModel) {
                 )
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
     }
 }
 
@@ -258,7 +258,7 @@ private fun IfaceCard(n: NetUiState, vm: ModemViewModel, onOpen: (String) -> Uni
                 }
 
                 if (open) {
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(8.dp))
                     InfoLine("Устройство", f.device.ifBlank { "—" })
                     InfoLine("Протокол", f.proto.ifBlank { "—" })
                     InfoLine("IP адрес", f.ip ?: "—")
@@ -277,7 +277,7 @@ private fun IfaceCard(n: NetUiState, vm: ModemViewModel, onOpen: (String) -> Uni
                         }
                     }
 
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(8.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Button(
                             onClick = { vm.renewIface(f.name) },

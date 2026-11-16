@@ -54,10 +54,10 @@ fun CardBox(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(18.dp))
+            .clip(RoundedCornerShape(14.dp))
             .background(color)
-            .border(1.dp, Outline, RoundedCornerShape(18.dp))
-            .padding(16.dp),
+            .border(1.dp, Outline, RoundedCornerShape(14.dp))
+            .padding(12.dp),
         content = content
     )
 }
@@ -138,7 +138,7 @@ fun SectionLabel(text: String) {
         fontSize = 11.sp,
         letterSpacing = 1.2.sp,
         fontWeight = FontWeight.SemiBold,
-        modifier = Modifier.padding(top = 6.dp, bottom = 8.dp)
+        modifier = Modifier.padding(top = 2.dp, bottom = 6.dp)
     )
 }
 
@@ -340,10 +340,10 @@ fun StatTile(
         modifier
             .clip(RoundedCornerShape(12.dp))
             .background(SurfaceHigh)
-            .padding(horizontal = 12.dp, vertical = 10.dp)
+            .padding(horizontal = 10.dp, vertical = 7.dp)
     ) {
         Column {
-            Text(value, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = color)
+            Text(value, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = color)
             Text(caption, fontSize = 10.sp, color = Muted)
         }
     }

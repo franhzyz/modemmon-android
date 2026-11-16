@@ -116,7 +116,6 @@ val NAV_SECTIONS = listOf(
             NavItem("clients", "DHCP", Icons.Filled.Person),
             NavItem("dns", "DNS", Icons.Filled.Search),
             NavItem("ping", "Диагностика", Icons.Filled.Search),
-            NavItem("speed", "Speed test", Icons.Filled.PlayArrow),
             NavItem("wol", "Wake-on-LAN", Icons.Filled.PlayArrow),
             NavItem("nfw", "Firewall", Icons.Filled.Lock)
         )

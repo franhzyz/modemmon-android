@@ -71,7 +71,7 @@ fun VpnScreen(
         }
 
         v.instances.forEach { inst ->
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             InstanceCard(inst)
         }
     }

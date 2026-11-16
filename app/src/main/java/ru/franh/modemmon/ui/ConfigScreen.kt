@@ -71,7 +71,7 @@ fun ConfigScreen(
     ScreenShell(connected = state.ubus.connected) {
         if (service != null) {
             ServiceCard(state, vm, service, title)
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
         }
 
         CardBox {
@@ -123,7 +123,7 @@ fun ConfigScreen(
             }
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         val base = if (onlySection == null) c.sections
         else c.sections.filter { it.name == onlySection }
@@ -167,7 +167,7 @@ fun ConfigScreen(
                     }
                 }
             }
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
         }
     }
 }
@@ -197,7 +197,7 @@ private fun ServiceCard(state: UiState, vm: ModemViewModel, service: String, tit
             fontFamily = FontFamily.Monospace
         )
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(
                 onClick = {

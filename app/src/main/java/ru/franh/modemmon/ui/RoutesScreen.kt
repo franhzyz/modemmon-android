@@ -59,7 +59,7 @@ fun RoutesScreen(state: UiState, vm: ModemViewModel) {
         val others = r.routes.filterNot { it.isDefault }
 
         if (defaults.isNotEmpty()) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             CardBox {
                 SectionLabel("Шлюзы по умолчанию")
                 Text(
@@ -116,7 +116,7 @@ fun RoutesScreen(state: UiState, vm: ModemViewModel) {
         }
 
         if (others.isNotEmpty()) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             CardBox {
                 SectionLabel("Прочие · ${others.size}")
                 others.forEach { route ->
@@ -147,7 +147,7 @@ fun RoutesScreen(state: UiState, vm: ModemViewModel) {
         }
 
         if (r.routes.isEmpty() && !r.loading) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             CardBox { Text("Маршрутов нет", color = Muted, fontSize = 12.sp) }
         }
     }

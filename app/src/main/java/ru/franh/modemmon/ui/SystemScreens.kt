@@ -333,7 +333,7 @@ fun CpuScreen(state: UiState, vm: ModemViewModel) {
             }
 
             if (s.cpuCores.isNotEmpty()) {
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(8.dp))
                 val max = if (s.cpuMaxMhz > 0) s.cpuMaxMhz else (s.cpuCores.maxOrNull() ?: 1f)
                 val avg = s.cpuCores.average().toInt()
 
@@ -416,7 +416,7 @@ fun CpuScreen(state: UiState, vm: ModemViewModel) {
         }
 
         if (s.cpu != null) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             CardBox {
                 SectionLabel("Процессор")
                 TextBlock(s.cpu)
@@ -522,7 +522,7 @@ fun WifiScreen(state: UiState, vm: ModemViewModel) {
         }
 
         w.radios.forEach { radio ->
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             CardBox {
                 val info = radio.info
                 if (info == null) {
@@ -702,7 +702,7 @@ fun RebootScreen(state: UiState, vm: ModemViewModel) {
                 fontSize = 12.sp,
                 lineHeight = 17.sp
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             Button(
                 onClick = { confirm = true },
                 modifier = Modifier.fillMaxWidth(),
@@ -798,7 +798,7 @@ fun OverviewScreen(state: UiState, vm: ModemViewModel) {
                 )
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
 
             s.ramPercent?.let { pct ->
                 ProgressRow(
@@ -830,7 +830,7 @@ fun OverviewScreen(state: UiState, vm: ModemViewModel) {
             }
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         if (s.overview.isNotEmpty()) {
             CardBox {
@@ -908,7 +908,7 @@ fun BackupScreen(state: UiState, vm: ModemViewModel) {
             }
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         CardBox {
             SectionLabel("Архивы · ${b.files.size}")
@@ -1013,7 +1013,7 @@ fun NotReadyScreen(state: UiState, title: String, luciPath: String) {
                 fontSize = 12.sp,
                 lineHeight = 18.sp
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             Button(
                 onClick = {
                     val base = state.settings.baseUrl.trimEnd('/')

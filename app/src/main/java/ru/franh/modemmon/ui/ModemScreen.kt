@@ -65,9 +65,9 @@ fun ModemDevicesScreen(state: UiState, vm: ModemViewModel) {
     }
     ScreenShell(connected = state.ubus.connected) {
         ChannelsCard(state, vm)
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
         DevicesCard(m, vm)
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
         RadioCard(m)
     }
 }
@@ -222,7 +222,7 @@ fun BandsScreen(state: UiState, vm: ModemViewModel) {
                     }
                 }
             }
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
         }
 
         CardBox {
@@ -472,7 +472,7 @@ private fun AtCard(m: ModemUiState, vm: ModemViewModel) {
         }
 
         if (m.atOutput.isNotEmpty()) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             ConsoleBox(m.atOutput)
         }
     }

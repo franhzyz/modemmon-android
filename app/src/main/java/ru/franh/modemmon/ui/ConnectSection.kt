@@ -90,7 +90,7 @@ fun ConnectSection(state: UiState, vm: ModemViewModel) {
         }
     }
 
-    Spacer(Modifier.height(12.dp))
+    Spacer(Modifier.height(8.dp))
 
     UbusLoginCard(state, vm)
 

@@ -69,14 +69,14 @@ fun ChannelsScreen(state: UiState, vm: ModemViewModel) {
         }
 
         if (s.aps.isNotEmpty()) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             ChannelLoad("Загрузка · 2.4 ГГц", s.aps.filter { it.band == 2 }, (1..13).toList())
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             val fiveChannels = s.aps.filter { it.band != 2 }.map { it.channel }.distinct().sorted()
             if (fiveChannels.isNotEmpty()) {
                 ChannelLoad("Загрузка · 5 ГГц", s.aps.filter { it.band != 2 }, fiveChannels)
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(8.dp))
             }
 
             CardBox {

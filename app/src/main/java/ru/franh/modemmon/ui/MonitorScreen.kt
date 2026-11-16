@@ -174,7 +174,7 @@ fun MonitorScreen(state: UiState, vm: ModemViewModel, nowTick: Long) {
             }
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         Sparkline(
             values = state.history[metric].orEmpty(),
@@ -182,7 +182,7 @@ fun MonitorScreen(state: UiState, vm: ModemViewModel, nowTick: Long) {
             peak = peak?.toFloat()
         )
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         val tips = if (value != null && snap != null) {
             SignalEval.tips(
@@ -215,7 +215,7 @@ fun MonitorScreen(state: UiState, vm: ModemViewModel, nowTick: Long) {
         val diagReason = engine?.diagnosisReason.orEmpty()
         val warnReason = engine?.warningReason.orEmpty()
         if (!warnReason.isNullOrBlank() || diagReason.isNotBlank()) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             CardBox {
                 SectionLabel("Диагностика движка")
                 if (warnReason.isNotBlank()) {
@@ -248,7 +248,7 @@ fun MonitorScreen(state: UiState, vm: ModemViewModel, nowTick: Long) {
         }
 
         snap?.error?.let {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             CardBox {
                 SectionLabel("Ошибка источника")
                 Text(it, color = Color(0xFFFF8A8D), fontSize = 13.sp)

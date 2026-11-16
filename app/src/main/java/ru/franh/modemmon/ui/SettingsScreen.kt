@@ -79,7 +79,7 @@ fun SettingsScreen(state: UiState, vm: ModemViewModel) {
                 fontSize = 12.sp,
                 lineHeight = 17.sp
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             OutlinedTextField(
                 value = baseUrl,
                 onValueChange = { baseUrl = it },
@@ -108,11 +108,11 @@ fun SettingsScreen(state: UiState, vm: ModemViewModel) {
             )
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         ConnectSection(state, vm)
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         CardBox {
             SectionLabel("Опрос")
@@ -126,13 +126,13 @@ fun SettingsScreen(state: UiState, vm: ModemViewModel) {
                     )
                 }
             }
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             SwitchRow("Демо-режим", "Имитация сигнала без роутера", demo) { demo = it }
             SwitchRow("Звук-парктроник", "Писк учащается у пика сигнала", sound) { sound = it }
             SwitchRow("Вибрация", "Короткий виброотклик при каждом писке", vibrate) { vibrate = it }
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Button(
@@ -168,7 +168,7 @@ fun SettingsScreen(state: UiState, vm: ModemViewModel) {
             }
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         CardBox {
             SectionLabel("Сброс")
@@ -188,7 +188,7 @@ fun SettingsScreen(state: UiState, vm: ModemViewModel) {
             }
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         CardBox {
             SectionLabel("Как это работает")

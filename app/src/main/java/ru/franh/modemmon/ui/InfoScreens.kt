@@ -50,16 +50,16 @@ fun CellScreen(state: UiState) {
         }
 
         NetworkCard(snap)
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         if (snap.lte.present) {
             LinkCard("Обслуживающая LTE-сота", snap.lte)
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
         }
 
         if (snap.nr.present) {
             LinkCard("5G NR-сота", snap.nr)
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
         } else if (snap.hasNr || snap.networkInfo.nrNsaAvailable != null || snap.networkInfo.nrSaService.isNotBlank()) {
             CardBox {
                 SectionLabel("5G NR")
@@ -73,25 +73,25 @@ fun CellScreen(state: UiState) {
                     lineHeight = 17.sp
                 )
             }
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
         }
 
         if (!snap.lte.present && !snap.nr.present) {
             EmptyHint("Модем не отдал параметры обслуживающей соты. Проверьте QMI NAS и ModemManager на роутере.")
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
         }
 
         CarrierAggregationCard(snap)
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         NeighborCellsCard(snap.neighbors)
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         SimCard(snap)
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         BearerCard(snap)
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         DeviceCard(snap)
         Spacer(Modifier.height(20.dp))
@@ -362,7 +362,7 @@ fun TrafficScreen(state: UiState) {
             SpeedTile("↑ Отдача", Fmt.rate(snap?.traffic?.ulRate), Accent, Modifier.weight(1f))
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         CardBox {
             SectionLabel("Трафик за сессию")
@@ -371,7 +371,7 @@ fun TrafficScreen(state: UiState) {
             InfoRow("Время соединения", Fmt.duration(snap?.traffic?.connectTime))
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         CardBox {
             SectionLabel("Модем")
@@ -388,7 +388,7 @@ fun TrafficScreen(state: UiState) {
             )
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         CardBox {
             SectionLabel("Состояние радиозвена")

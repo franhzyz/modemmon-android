@@ -29,9 +29,9 @@ fun ScreenShell(
         Modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 12.dp)
     ) {
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(6.dp))
         if (!connected) {
             CardBox {
                 SectionLabel("Нужен вход")
@@ -40,6 +40,6 @@ fun ScreenShell(
         } else {
             content()
         }
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(12.dp))
     }
 }
