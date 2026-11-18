@@ -120,7 +120,8 @@ class MainActivity : ComponentActivity() {
 private data class Tab(val title: String, val icon: ImageVector)
 
 /** Вкладки прежнего приложения: живут вместе на одном экране внутри панели. */
-private val TABS = listOf(
+// Функция (не val) — чтобы подписи пересчитывались при смене языка.
+private fun tabs() = listOf(
     Tab(L10n.s("Монитор", "Monitor"), Icons.Filled.Home),
     Tab(L10n.s("Сота", "Cell"), Icons.Filled.Place),
     Tab(L10n.s("Трафик", "Traffic"), Icons.Filled.List)
@@ -138,7 +139,7 @@ private fun LegacyTabs(state: ru.franh.modemmon.vm.UiState, vm: ModemViewModel, 
             }
         }
         NavigationBar(containerColor = Surface, tonalElevation = 0.dp) {
-            TABS.forEachIndexed { i, t ->
+            tabs().forEachIndexed { i, t ->
                 NavigationBarItem(
                     selected = tab == i,
                     onClick = { tab = i },
