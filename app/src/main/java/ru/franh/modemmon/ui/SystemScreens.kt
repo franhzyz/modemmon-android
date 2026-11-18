@@ -1,5 +1,7 @@
 package ru.franh.modemmon.ui
 
+import ru.franh.modemmon.util.L10n
+
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
@@ -115,25 +117,25 @@ fun PackagesScreen(state: UiState, vm: ModemViewModel) {
     }
     ScreenShell(connected = state.ubus.connected) {
         CardBox {
-            SectionLabel("Программы · ${state.sys.packages.size}")
+            SectionLabel(L10n.s("Программы · ${state.sys.packages.size}", "Packages · ${state.sys.packages.size}"))
             OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                label = { Text("Поиск") },
+                label = { Text(L10n.s("Поиск", "Search")) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(8.dp))
             state.sys.error?.let { Text(it, color = Bad, fontSize = 12.sp) }
             state.sys.actionResult?.let {
-                Text(it, fontSize = 11.sp, color = if (it.startsWith("Ошибка")) Bad else Good)
+                Text(it, fontSize = 11.sp, color = if (it.startsWith(L10n.s("Ошибка", "Error"))) Bad else Good)
                 Spacer(Modifier.height(6.dp))
             }
             val filtered = state.sys.packages.filter {
                 query.isBlank() || it.first.contains(query, true)
             }
             Text(
-                if (filtered.isEmpty()) "Ничего не найдено" else "Нажмите на пакет для установки или удаления",
+                if (filtered.isEmpty()) L10n.s("Ничего не найдено", "Nothing found") else L10n.s("Нажмите на пакет для установки или удаления", "Tap a package to install or remove it"),
                 color = Muted,
                 fontSize = 11.sp
             )
@@ -160,20 +162,20 @@ fun PackagesScreen(state: UiState, vm: ModemViewModel) {
         AlertDialog(
             onDismissRequest = { pending = null },
             title = { Text(name) },
-            text = { Text("Установить пакет или удалить его с роутера?") },
+            text = { Text(L10n.s("Установить пакет или удалить его с роутера?", "Install the package or remove it from the router?")) },
             confirmButton = {
                 TextButton(onClick = {
                     pending = null
                     vm.packageAction(name, install = true)
-                }) { Text("Установить", color = Accent) }
+                }) { Text(L10n.s("Установить", "Install"), color = Accent) }
             },
             dismissButton = {
                 Row {
-                    TextButton(onClick = { pending = null }) { Text("Отмена", color = Muted) }
+                    TextButton(onClick = { pending = null }) { Text(L10n.s("Отмена", "Cancel"), color = Muted) }
                     TextButton(onClick = {
                         pending = null
                         vm.packageAction(name, install = false)
-                    }) { Text("Удалить", color = Bad) }
+                    }) { Text(L10n.s("Удалить", "Delete"), color = Bad) }
                 }
             }
         )
@@ -196,14 +198,14 @@ fun ServicesScreen(state: UiState, vm: ModemViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SectionLabel("Автозапуск · ${state.sys.services.size}")
+                SectionLabel(L10n.s("Автозапуск · ${state.sys.services.size}", "Autostart · ${state.sys.services.size}"))
                 TextButton(onClick = { vm.loadServices() }) {
-                    Text("Обновить", fontSize = 12.sp, color = Accent)
+                    Text(L10n.s("Обновить", "Refresh"), fontSize = 12.sp, color = Accent)
                 }
             }
             state.sys.error?.let { Text(it, color = Bad, fontSize = 12.sp) }
             state.sys.actionResult?.let {
-                Text(it, fontSize = 11.sp, color = if (it.startsWith("Ошибка")) Bad else Good)
+                Text(it, fontSize = 11.sp, color = if (it.startsWith(L10n.s("Ошибка", "Error"))) Bad else Good)
                 Spacer(Modifier.height(6.dp))
             }
             state.sys.services.forEach { (name, enabled, index) ->
@@ -217,13 +219,13 @@ fun ServicesScreen(state: UiState, vm: ModemViewModel) {
                 ) {
                     Column(Modifier.weight(1f)) {
                         Text(name, fontSize = 13.sp)
-                        Text("порядок $index", color = Muted, fontSize = 10.sp)
+                        Text(L10n.s("порядок $index", "order $index"), color = Muted, fontSize = 10.sp)
                     }
                     TextButton(onClick = {
-                        pending = Triple(name, "restart", "Перезапустить службу $name?")
+                        pending = Triple(name, "restart", L10n.s("Перезапустить службу $name?", "Restart service $name?"))
                     }) { Text("↻", fontSize = 16.sp, color = Accent) }
                     TextButton(onClick = {
-                        pending = Triple(name, "stop", "Остановить службу $name? Это может нарушить работу роутера.")
+                        pending = Triple(name, "stop", L10n.s("Остановить службу $name? Это может нарушить работу роутера.", "Stop service $name? This may disrupt the router."))
                     }) { Text("■", fontSize = 14.sp, color = Muted) }
                     Switch(
                         checked = enabled,
@@ -231,7 +233,7 @@ fun ServicesScreen(state: UiState, vm: ModemViewModel) {
                             pending = Triple(
                                 name,
                                 if (on) "enable" else "disable",
-                                if (on) "Включить $name в автозапуск?" else "Отключить $name из автозапуска?"
+                                if (on) L10n.s("Включить $name в автозапуск?", "Enable $name autostart?") else L10n.s("Отключить $name из автозапуска?", "Disable $name autostart?")
                             )
                         }
                     )
@@ -244,16 +246,16 @@ fun ServicesScreen(state: UiState, vm: ModemViewModel) {
     pending?.let { (name, act, question) ->
         AlertDialog(
             onDismissRequest = { pending = null },
-            title = { Text("Подтверждение") },
+            title = { Text(L10n.s("Подтверждение", "Confirm")) },
             text = { Text(question) },
             confirmButton = {
                 TextButton(onClick = {
                     pending = null
                     vm.serviceAction(name, act)
-                }) { Text("Выполнить", color = Accent) }
+                }) { Text(L10n.s("Выполнить", "Execute"), color = Accent) }
             },
             dismissButton = {
-                TextButton(onClick = { pending = null }) { Text("Отмена", color = Muted) }
+                TextButton(onClick = { pending = null }) { Text(L10n.s("Отмена", "Cancel"), color = Muted) }
             }
         )
     }
@@ -270,7 +272,7 @@ fun LedsScreen(state: UiState, vm: ModemViewModel) {
         CardBox {
             SectionLabel("LED · ${state.sys.leds.size}")
             state.sys.error?.let { Text(it, color = Bad, fontSize = 12.sp) }
-            if (state.sys.leds.isEmpty()) Text("Индикаторов нет", color = Muted, fontSize = 12.sp)
+            if (state.sys.leds.isEmpty()) Text(L10n.s("Индикаторов нет", "No indicators"), color = Muted, fontSize = 12.sp)
             state.sys.leds.forEach { SimpleRow(it, "") }
         }
     }
@@ -290,9 +292,9 @@ fun ProcessesScreen(state: UiState, vm: ModemViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SectionLabel("Процессы · ${state.sys.processes.size}")
+                SectionLabel(L10n.s("Процессы · ${state.sys.processes.size}", "Processes · ${state.sys.processes.size}"))
                 TextButton(onClick = { vm.loadProcesses() }) {
-                    Text("Обновить", fontSize = 12.sp, color = Accent)
+                    Text(L10n.s("Обновить", "Refresh"), fontSize = 12.sp, color = Accent)
                 }
             }
             state.sys.error?.let { Text(it, color = Bad, fontSize = 12.sp) }
@@ -318,14 +320,14 @@ fun CpuScreen(state: UiState, vm: ModemViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SectionLabel("Частота CPU")
+                SectionLabel(L10n.s("Частота CPU", "CPU frequency"))
                 TextButton(onClick = { vm.loadCpu() }) {
-                    Text("Обновить", fontSize = 12.sp, color = Accent)
+                    Text(L10n.s("Обновить", "Refresh"), fontSize = 12.sp, color = Accent)
                 }
             }
 
             s.cpuModel?.let {
-                Text("Ядро: $it", color = Muted, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
+                Text(L10n.s("Ядро: $it", "Core: $it"), color = Muted, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
             }
             s.cpuGovernor?.let {
                 Spacer(Modifier.height(4.dp))
@@ -340,20 +342,20 @@ fun CpuScreen(state: UiState, vm: ModemViewModel) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     StatTile(
                         value = "$avg",
-                        caption = "МГц сейчас",
+                        caption = L10n.s("МГц сейчас", "MHz now"),
                         color = Accent,
                         modifier = Modifier.weight(1f)
                     )
                     StatTile(
                         value = "${max.toInt()}",
-                        caption = "МГц максимум",
+                        caption = L10n.s("МГц максимум", "MHz max"),
                         color = Muted,
                         modifier = Modifier.weight(1f)
                     )
                 }
 
                 Spacer(Modifier.height(14.dp))
-                Text("По ядрам", color = Muted, fontSize = 11.sp)
+                Text(L10n.s("По ядрам", "Per core"), color = Muted, fontSize = 11.sp)
                 Spacer(Modifier.height(6.dp))
 
                 s.cpuCores.forEachIndexed { i, mhz ->
@@ -365,7 +367,7 @@ fun CpuScreen(state: UiState, vm: ModemViewModel) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            "ядро $i",
+                            L10n.s("ядро $i", "core $i"),
                             modifier = Modifier.width(58.dp),
                             fontSize = 11.sp,
                             color = Muted,
@@ -404,21 +406,21 @@ fun CpuScreen(state: UiState, vm: ModemViewModel) {
 
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "Полоса показывает загрузку частоты относительно максимума",
+                    L10n.s("Полоса показывает загрузку частоты относительно максимума", "The bar shows frequency load relative to the maximum"),
                     color = Muted,
                     fontSize = 10.sp
                 )
             } else if (s.error != null) {
                 Text(s.error, color = Bad, fontSize = 12.sp)
             } else {
-                Text("Данных нет", color = Muted, fontSize = 12.sp)
+                Text(L10n.s("Данных нет", "No data"), color = Muted, fontSize = 12.sp)
             }
         }
 
         if (s.cpu != null) {
             Spacer(Modifier.height(8.dp))
             CardBox {
-                SectionLabel("Процессор")
+                SectionLabel(L10n.s("Процессор", "Processor"))
                 TextBlock(s.cpu)
             }
         }
@@ -441,13 +443,13 @@ fun CrontabScreen(state: UiState, vm: ModemViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SectionLabel("Задачи по расписанию")
+                SectionLabel(L10n.s("Задачи по расписанию", "Scheduled tasks"))
                 TextButton(onClick = { vm.loadCrontab() }) {
-                    Text("Перечитать", fontSize = 12.sp, color = Accent)
+                    Text(L10n.s("Перечитать", "Reload"), fontSize = 12.sp, color = Accent)
                 }
             }
             Text(
-                "/etc/crontabs/root · формат: минута час день месяц день_недели команда",
+                L10n.s("/etc/crontabs/root · формат: минута час день месяц день_недели команда", "/etc/crontabs/root · format: minute hour day month weekday command"),
                 color = Muted,
                 fontSize = 11.sp,
                 lineHeight = 16.sp
@@ -461,7 +463,7 @@ fun CrontabScreen(state: UiState, vm: ModemViewModel) {
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it },
-                label = { Text("Содержимое") },
+                label = { Text(L10n.s("Содержимое", "Content")) },
                 textStyle = androidx.compose.ui.text.TextStyle(
                     fontFamily = FontFamily.Monospace,
                     fontSize = 12.sp
@@ -478,7 +480,7 @@ fun CrontabScreen(state: UiState, vm: ModemViewModel) {
                 enabled = !state.sys.loading,
                 colors = ButtonDefaults.buttonColors(containerColor = Accent)
             ) {
-                Text(if (state.sys.loading) "Сохраняю…" else "Сохранить", fontWeight = FontWeight.SemiBold)
+                Text(if (state.sys.loading) L10n.s("Сохраняю…", "Saving…") else L10n.s("Сохранить", "Save"), fontWeight = FontWeight.SemiBold)
             }
 
             state.sys.actionResult?.let {
@@ -486,7 +488,7 @@ fun CrontabScreen(state: UiState, vm: ModemViewModel) {
                 Text(
                     it,
                     fontSize = 12.sp,
-                    color = if (it.startsWith("Ошибка")) Bad else Good
+                    color = if (it.startsWith(L10n.s("Ошибка", "Error"))) Bad else Good
                 )
             }
         }
@@ -512,12 +514,12 @@ fun WifiScreen(state: UiState, vm: ModemViewModel) {
             ) {
                 SectionLabel("Wireless · ${w.radios.size}")
                 TextButton(onClick = { vm.loadWifi2() }, enabled = !w.loading) {
-                    Text(if (w.loading) "Читаю…" else "Обновить", fontSize = 12.sp, color = Accent)
+                    Text(if (w.loading) L10n.s("Читаю…", "Reading…") else L10n.s("Обновить", "Refresh"), fontSize = 12.sp, color = Accent)
                 }
             }
             w.error?.let { Text(it, color = Bad, fontSize = 12.sp) }
             if (w.radios.isEmpty() && !w.loading) {
-                Text("Wi-Fi не найден", color = Muted, fontSize = 12.sp)
+                Text(L10n.s("Wi-Fi не найден", "No Wi-Fi found"), color = Muted, fontSize = 12.sp)
             }
         }
 
@@ -527,7 +529,7 @@ fun WifiScreen(state: UiState, vm: ModemViewModel) {
                 val info = radio.info
                 if (info == null) {
                     Text(radio.device, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-                    Text("нет данных", color = Muted, fontSize = 12.sp)
+                    Text(L10n.s("нет данных", "no data"), color = Muted, fontSize = 12.sp)
                     return@CardBox
                 }
 
@@ -562,34 +564,34 @@ fun WifiScreen(state: UiState, vm: ModemViewModel) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     StatTile(
                         value = info.channel.toString(),
-                        caption = "канал",
+                        caption = L10n.s("канал", "channel"),
                         color = Accent,
                         modifier = Modifier.weight(1f)
                     )
                     StatTile(
                         value = "${info.frequency}",
-                        caption = "МГц",
+                        caption = L10n.s("МГц", "MHz"),
                         color = Muted,
                         modifier = Modifier.weight(1f)
                     )
                     StatTile(
                         value = radio.clients.size.toString(),
-                        caption = "клиентов",
+                        caption = L10n.s("клиентов", "clients"),
                         color = if (radio.clients.isEmpty()) Muted else Good,
                         modifier = Modifier.weight(1f)
                     )
                 }
 
                 Spacer(Modifier.height(10.dp))
-                InfoRow("Шифрование", info.encryption)
-                InfoRow("Режим", "${info.hwmode} / ${info.htmode}")
-                InfoRow("Мощность", if (info.txpower > 0) "${info.txpower} дБм" else "—")
+                InfoRow(L10n.s("Шифрование", "Encryption"), info.encryption)
+                InfoRow(L10n.s("Режим", "Mode"), "${info.hwmode} / ${info.htmode}")
+                InfoRow(L10n.s("Мощность", "Power"), if (info.txpower > 0) L10n.s("${info.txpower} дБм", "${info.txpower} dBm") else "—")
 
                 Spacer(Modifier.height(10.dp))
-                Text("Клиенты", color = Muted, fontSize = 11.sp)
+                Text(L10n.s("Клиенты", "Clients"), color = Muted, fontSize = 11.sp)
                 Spacer(Modifier.height(6.dp))
                 if (radio.clients.isEmpty()) {
-                    Text("Никто не подключён", color = Muted, fontSize = 12.sp)
+                    Text(L10n.s("Никто не подключён", "Nobody connected"), color = Muted, fontSize = 12.sp)
                 }
                 radio.clients.forEach { c ->
                     Row(
@@ -608,7 +610,7 @@ fun WifiScreen(state: UiState, vm: ModemViewModel) {
                             )
                             Text(
                                 fmtConn(c.connectedSec) +
-                                    if (c.authorized) "" else " · не авторизован",
+                                    if (c.authorized) "" else L10n.s(" · не авторизован", " · not authorized"),
                                 color = if (c.authorized) Muted else Warn,
                                 fontSize = 10.sp
                             )
@@ -679,11 +681,11 @@ private fun Badge(text: String, color: androidx.compose.ui.graphics.Color) {
 }
 
 private fun fmtConn(sec: Long): String = when {
-    sec <= 0 -> "только что"
-    sec < 60 -> "$sec с"
-    sec < 3600 -> "${sec / 60} мин"
-    sec < 86400 -> "${sec / 3600} ч ${(sec % 3600) / 60} м"
-    else -> "${sec / 86400} дн"
+    sec <= 0 -> L10n.s("только что", "just now")
+    sec < 60 -> L10n.s("$sec с", "$sec s")
+    sec < 3600 -> L10n.s("${sec / 60} мин", "${sec / 60} min")
+    sec < 86400 -> L10n.s("${sec / 3600} ч ${(sec % 3600) / 60} м", "${sec / 3600} h ${(sec % 3600) / 60} m")
+    else -> L10n.s("${sec / 86400} дн", "${sec / 86400} d")
 }
 
 // ---------------- Перезагрузка ----------------
@@ -694,10 +696,10 @@ fun RebootScreen(state: UiState, vm: ModemViewModel) {
 
     ScreenShell(connected = state.ubus.connected) {
         CardBox {
-            SectionLabel("Перезагрузка")
+            SectionLabel(L10n.s("Перезагрузка", "Reboot"))
             Text(
-                "Роутер уйдёт в перезагрузку и пропадёт из сети примерно на минуту. " +
-                    "Модемы переподключатся сами.",
+                L10n.s("Роутер уйдёт в перезагрузку и пропадёт из сети примерно на минуту. ", "The router will reboot and disappear from the network for about a minute. ") +
+                    L10n.s("Модемы переподключатся сами.", "Modems will reconnect on their own."),
                 color = Muted,
                 fontSize = 12.sp,
                 lineHeight = 17.sp
@@ -708,11 +710,11 @@ fun RebootScreen(state: UiState, vm: ModemViewModel) {
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = Bad.copy(alpha = 0.18f), contentColor = Bad)
             ) {
-                Text("Перезагрузить роутер", fontWeight = FontWeight.SemiBold)
+                Text(L10n.s("Перезагрузить роутер", "Reboot router"), fontWeight = FontWeight.SemiBold)
             }
             state.sys.actionResult?.let {
                 Spacer(Modifier.height(10.dp))
-                Text(it, fontSize = 12.sp, color = if (it.contains("перезагружается")) Good else Warn)
+                Text(it, fontSize = 12.sp, color = if (it.contains(L10n.s("перезагружается", "rebooting"))) Good else Warn)
             }
         }
     }
@@ -720,16 +722,16 @@ fun RebootScreen(state: UiState, vm: ModemViewModel) {
     if (confirm) {
         AlertDialog(
             onDismissRequest = { confirm = false },
-            title = { Text("Перезагрузить роутер?") },
-            text = { Text("Связь с роутером прервётся. Уверены?") },
+            title = { Text(L10n.s("Перезагрузить роутер?", "Reboot the router?")) },
+            text = { Text(L10n.s("Связь с роутером прервётся. Уверены?", "Connection to the router will drop. Sure?")) },
             confirmButton = {
                 TextButton(onClick = {
                     confirm = false
                     vm.rebootRouter()
-                }) { Text("Перезагрузить", color = Bad) }
+                }) { Text(L10n.s("Перезагрузить", "Reboot"), color = Bad) }
             },
             dismissButton = {
-                TextButton(onClick = { confirm = false }) { Text("Отмена", color = Muted) }
+                TextButton(onClick = { confirm = false }) { Text(L10n.s("Отмена", "Cancel"), color = Muted) }
             }
         )
     }
@@ -750,28 +752,28 @@ fun OverviewScreen(state: UiState, vm: ModemViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SectionLabel("Обзор")
+                SectionLabel(L10n.s("Обзор", "Overview"))
                 TextButton(onClick = { vm.loadOverview() }, enabled = !s.loading) {
-                    Text(if (s.loading) "Читаю…" else "Обновить", fontSize = 12.sp, color = Accent)
+                    Text(if (s.loading) L10n.s("Читаю…", "Reading…") else L10n.s("Обновить", "Refresh"), fontSize = 12.sp, color = Accent)
                 }
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 StatTile(
                     value = s.uptimeText ?: "—",
-                    caption = "работает",
+                    caption = L10n.s("работает", "running"),
                     color = Good,
                     modifier = Modifier.weight(1f)
                 )
                 StatTile(
                     value = if (s.cores > 0) s.cores.toString() else "—",
-                    caption = "ядер",
+                    caption = L10n.s("ядер", "cores"),
                     color = Accent,
                     modifier = Modifier.weight(1f)
                 )
                 StatTile(
                     value = s.ramPercent?.let { "$it%" } ?: "—",
-                    caption = "занято RAM",
+                    caption = L10n.s("занято RAM", "RAM used"),
                     color = when {
                         (s.ramPercent ?: 0) >= 90 -> Bad
                         (s.ramPercent ?: 0) >= 70 -> Warn
@@ -786,13 +788,13 @@ fun OverviewScreen(state: UiState, vm: ModemViewModel) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 StatTile(
                     value = s.routerTemp?.let { "%.1f°".format(it) } ?: "—",
-                    caption = "роутер",
+                    caption = L10n.s("роутер", "router"),
                     color = tempColor(s.routerTemp),
                     modifier = Modifier.weight(1f)
                 )
                 StatTile(
                     value = s.modemTemp?.let { "%.0f°".format(it) } ?: "—",
-                    caption = "модем",
+                    caption = L10n.s("модем", "modem"),
                     color = tempColor(s.modemTemp),
                     modifier = Modifier.weight(1f)
                 )
@@ -802,7 +804,7 @@ fun OverviewScreen(state: UiState, vm: ModemViewModel) {
 
             s.ramPercent?.let { pct ->
                 ProgressRow(
-                    label = "Память",
+                    label = L10n.s("Память", "Memory"),
                     value = s.ramText ?: "$pct%",
                     fraction = pct / 100f,
                     color = when {
@@ -814,7 +816,7 @@ fun OverviewScreen(state: UiState, vm: ModemViewModel) {
             }
             s.loadPercent?.let { pct ->
                 ProgressRow(
-                    label = "Нагрузка CPU",
+                    label = L10n.s("Нагрузка CPU", "CPU load"),
                     value = "$pct%",
                     fraction = pct / 100f,
                     color = when {
@@ -826,7 +828,7 @@ fun OverviewScreen(state: UiState, vm: ModemViewModel) {
             }
 
             if (s.overview.isEmpty() && !s.loading) {
-                Text("Нет данных", color = Muted, fontSize = 12.sp)
+                Text(L10n.s("Нет данных", "No data"), color = Muted, fontSize = 12.sp)
             }
         }
 
@@ -834,17 +836,19 @@ fun OverviewScreen(state: UiState, vm: ModemViewModel) {
 
         if (s.overview.isNotEmpty()) {
             CardBox {
-                val model = s.overview.firstOrNull { it.first == "Модель" }?.second
+                val model = s.overview.firstOrNull { it.first == L10n.s("Модель", "Model") }?.second
                 if (model != null) {
                     Text(model, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                    Text("роутер", color = Muted, fontSize = 10.sp)
+                    Text(L10n.s("роутер", "router"), color = Muted, fontSize = 10.sp)
                     Spacer(Modifier.height(10.dp))
                 }
-                s.overview.filterNot { it.first == "Модель" }.forEach { (label, value) ->
+                s.overview.filterNot { it.first == L10n.s("Модель", "Model") }.forEach { (label, value) ->
                     SimpleRow(label, value)
                 }
             }
         }
+
+        ClientsCard(state, vm)
     }
 }
 
@@ -873,14 +877,14 @@ fun BackupScreen(state: UiState, vm: ModemViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SectionLabel("Резервная копия")
+                SectionLabel(L10n.s("Резервная копия", "Backup"))
                 TextButton(onClick = { vm.loadBackups() }, enabled = !b.loading) {
-                    Text("Обновить", fontSize = 12.sp, color = Accent)
+                    Text(L10n.s("Обновить", "Refresh"), fontSize = 12.sp, color = Accent)
                 }
             }
             Text(
-                "Архив конфигурации создаётся на роутере в /tmp. " +
-                    "Скачать его можно через веб-интерфейс роутера.",
+                L10n.s("Архив конфигурации создаётся на роутере в /tmp. ", "The config archive is created on the router in /tmp. ") +
+                    L10n.s("Скачать его можно через веб-интерфейс роутера.", "Download it via the router web interface."),
                 color = Muted,
                 fontSize = 11.sp,
                 lineHeight = 16.sp
@@ -892,14 +896,14 @@ fun BackupScreen(state: UiState, vm: ModemViewModel) {
                 enabled = !b.loading,
                 colors = ButtonDefaults.buttonColors(containerColor = Accent)
             ) {
-                Text(if (b.loading) "Создаю…" else "Создать копию", fontWeight = FontWeight.SemiBold)
+                Text(if (b.loading) L10n.s("Создаю…", "Creating…") else L10n.s("Создать копию", "Create backup"), fontWeight = FontWeight.SemiBold)
             }
             b.message?.let {
                 Spacer(Modifier.height(8.dp))
                 Text(
                     it,
                     fontSize = 12.sp,
-                    color = if (it.startsWith("Ошибка")) Bad else Good
+                    color = if (it.startsWith(L10n.s("Ошибка", "Error"))) Bad else Good
                 )
             }
             b.error?.let {
@@ -911,9 +915,9 @@ fun BackupScreen(state: UiState, vm: ModemViewModel) {
         Spacer(Modifier.height(8.dp))
 
         CardBox {
-            SectionLabel("Архивы · ${b.files.size}")
+            SectionLabel(L10n.s("Архивы · ${b.files.size}", "Archives · ${b.files.size}"))
             if (b.files.isEmpty() && !b.loading) {
-                Text("Архивов пока нет", color = Muted, fontSize = 12.sp)
+                Text(L10n.s("Архивов пока нет", "No archives yet"), color = Muted, fontSize = 12.sp)
             }
             b.files.forEach { (name, size) ->
                 Row(
@@ -954,8 +958,8 @@ fun BackupScreen(state: UiState, vm: ModemViewModel) {
 }
 
 private fun fmtSize(b: Long): String {
-    if (b <= 0) return "0 Б"
-    val units = listOf("Б", "КиБ", "МиБ")
+    if (b <= 0) return L10n.s("0 Б", "0 B")
+    val units = listOf(L10n.s("Б", "B"), L10n.s("КиБ", "KiB"), L10n.s("МиБ", "MiB"))
     var v = b.toDouble()
     var i = 0
     while (v >= 1024 && i < units.lastIndex) {
@@ -990,7 +994,7 @@ fun ExecScreen(
             ) {
                 SectionLabel(title)
                 TextButton(onClick = { vm.runExec(title, command, params) }) {
-                    Text("Обновить", fontSize = 12.sp, color = Accent)
+                    Text(L10n.s("Обновить", "Refresh"), fontSize = 12.sp, color = Accent)
                 }
             }
             Text(hint, color = Muted, fontSize = 11.sp, lineHeight = 16.sp)
@@ -1007,8 +1011,8 @@ fun NotReadyScreen(state: UiState, title: String, luciPath: String) {
         CardBox {
             SectionLabel(title)
             Text(
-                "Этот раздел пока не реализован в приложении — он есть только в веб-интерфейсе LuCI. " +
-                    "Открыть можно в браузере.",
+                L10n.s("Этот раздел пока не реализован в приложении — он есть только в веб-интерфейсе LuCI. ", "This section is not implemented in the app yet — it exists only in the LuCI web interface. ") +
+                    L10n.s("Открыть можно в браузере.", "Open it in a browser."),
                 color = Muted,
                 fontSize = 12.sp,
                 lineHeight = 18.sp
@@ -1025,7 +1029,7 @@ fun NotReadyScreen(state: UiState, title: String, luciPath: String) {
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = SurfaceHigh, contentColor = Accent)
             ) {
-                Text("Открыть в LuCI", fontWeight = FontWeight.SemiBold)
+                Text(L10n.s("Открыть в LuCI", "Open in LuCI"), fontWeight = FontWeight.SemiBold)
             }
         }
     }
