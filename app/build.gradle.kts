@@ -1,3 +1,4 @@
+import java.util.Properties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -21,7 +22,7 @@ android {
     signingConfigs {
         // Ключ и пароли лежат в local.properties (вне репозитория).
         // Если их нет — release собирается неподписанным.
-        val lp = java.util.Properties()
+        val lp = Properties()
         val lpFile = rootProject.file("local.properties")
         if (lpFile.exists()) lpFile.inputStream().use { lp.load(it) }
         val ksPath = lp.getProperty("modemmon.keystore")
