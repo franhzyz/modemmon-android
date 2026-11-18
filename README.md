@@ -1,5 +1,7 @@
 # ModemMon — монитор модема и роутера в OpenWrt
 
+**Русский** | [English](README.en.md)
+
 Android-приложение для наведения антенны, контроля модема и управления
 роутером с OpenWrt (тестировалось под Foxconn T99W175, Snapdragon X55, QMI,
 OrangePi Zero3).
