@@ -1,5 +1,7 @@
 package ru.franh.modemmon.vm
 
+import ru.franh.modemmon.util.L10n
+
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
@@ -439,13 +441,13 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
 
     fun test(url: String) {
         viewModelScope.launch {
-            _state.value = _state.value.copy(testResult = "Проверяю…")
+            _state.value = _state.value.copy(testResult = L10n.s("Проверяю…", "Checking…"))
             val snap = withContext(Dispatchers.IO) { ModemApi.fetch(url) }
             val msg = if (snap.online) {
                 "OK · ${snap.rat.ifBlank { "?" }} · ${snap.operator.ifBlank { "?" }}" +
                     if (snap.nr.sinr != null) " · NR SINR ${snap.nr.sinr}" else ""
             } else {
-                "Ошибка: ${snap.error ?: "нет данных"}"
+                "Ошибка: ${snap.error ?: L10n.s("нет данных", "no data")}"
             }
             _state.value = _state.value.copy(testResult = msg)
         }
@@ -490,7 +492,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
         if (remember) creds.save(user, password) else creds.clear()
         viewModelScope.launch {
             if (!silent) {
-                _state.value = _state.value.copy(ubus = UbusState(busy = true, message = "Подключаюсь…"))
+                _state.value = _state.value.copy(ubus = UbusState(busy = true, message = L10n.s("Подключаюсь…", "Connecting…")))
             }
             val reply = withContext(Dispatchers.IO) { Ubus.login(base, user, password) }
             val token = reply.data?.optString("token").orEmpty()
@@ -500,7 +502,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                     busy = false,
                     ok = reply.ok,
                     connected = ubusToken != null,
-                    message = reply.error ?: "Подключено"
+                    message = reply.error ?: L10n.s("Подключено", "Connected")
                 ),
                 rememberUser = if (remember) user else null,
                 rememberPass = if (remember) password else null
@@ -523,7 +525,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                     ubusToken = token
                     if (!_state.value.ubus.connected) {
                         _state.value = _state.value.copy(
-                            ubus = _state.value.ubus.copy(connected = true, message = "Подключено")
+                            ubus = _state.value.ubus.copy(connected = true, message = L10n.s("Подключено", "Connected"))
                         )
                     }
                 }
@@ -551,7 +553,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
     ) {
         val token = ubusToken
         if (token == null) {
-            onResult(Ubus.Reply(null, "Нет сессии — войдите в ubus"))
+            onResult(Ubus.Reply(null, L10n.s("Нет сессии — войдите в ubus", "No session — log in to ubus")))
             return
         }
         val base = _state.value.settings.baseUrl
@@ -568,7 +570,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                     if (newToken.isNotBlank()) {
                         ubusToken = newToken
                         _state.value = _state.value.copy(
-                            ubus = _state.value.ubus.copy(connected = true, message = "Подключено")
+                            ubus = _state.value.ubus.copy(connected = true, message = L10n.s("Подключено", "Connected"))
                         )
                         reply = withContext(Dispatchers.IO) {
                             Ubus.call(base, newToken, obj, method, args)
@@ -583,7 +585,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
     /** Ошибка сессии/доступа: повод для тихого перелогина и повтора. */
     private fun isAuthError(error: String?): Boolean {
         val e = error ?: return false
-        return e.contains("Доступ запрещён", true) ||
+        return e.contains(L10n.s("Доступ запрещён", "Access denied"), true) ||
             e.contains("Access denied", true) ||
             e.contains("Permission denied", true)
     }
@@ -594,7 +596,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
     fun loadDevices() {
         val token = ubusToken ?: run {
             _state.value = _state.value.copy(
-                modem = _state.value.modem.copy(error = "Нет сессии — войдите в ubus")
+                modem = _state.value.modem.copy(error = L10n.s("Нет сессии — войдите в ubus", "No session — log in to ubus"))
             )
             return
         }
@@ -645,13 +647,13 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
         if (cmd.isEmpty()) return
         val token = ubusToken ?: run {
             _state.value = _state.value.copy(
-                modem = _state.value.modem.copy(atOutput = listOf("Нет сессии — войдите в ubus"))
+                modem = _state.value.modem.copy(atOutput = listOf(L10n.s("Нет сессии — войдите в ubus", "No session — log in to ubus")))
             )
             return
         }
         val id = _state.value.modem.selectedId ?: run {
             _state.value = _state.value.copy(
-                modem = _state.value.modem.copy(atOutput = listOf("Сначала выберите модем"))
+                modem = _state.value.modem.copy(atOutput = listOf(L10n.s("Сначала выберите модем", "Select a modem first")))
             )
             return
         }
@@ -665,7 +667,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
             val lines = buildList {
                 add("> $cmd")
                 if (err != null) {
-                    add("Ошибка: $err")
+                    add(L10n.s("Ошибка: $err", "Error: $err"))
                 } else if (reply != null) {
                     addAll(reply.lines)
                     add("[${reply.final.ifBlank { if (reply.ok) "OK" else "FAIL" }}] · ${reply.elapsedMs} мс · ${reply.port}")
@@ -706,12 +708,12 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
         val id = _state.value.modem.selectedId ?: return
         val base = _state.value.settings.baseUrl
         viewModelScope.launch {
-            _state.value = _state.value.copy(sms = _state.value.sms.copy(sendResult = "Отправляю…"))
+            _state.value = _state.value.copy(sms = _state.value.sms.copy(sendResult = L10n.s("Отправляю…", "Sending…")))
             val err = withContext(Dispatchers.IO) {
                 MedveModem.smsSend(base, token, id, number.trim(), text)
             }
             _state.value = _state.value.copy(
-                sms = _state.value.sms.copy(sendResult = err ?: "Отправлено")
+                sms = _state.value.sms.copy(sendResult = err ?: L10n.s("Отправлено", "Sent"))
             )
             if (err == null) loadSms()
         }
@@ -905,11 +907,11 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
         val base = _state.value.settings.baseUrl
         viewModelScope.launch {
             _state.value = _state.value.copy(
-                net = _state.value.net.copy(pingBusy = true, pingOut = "Проверяю…")
+                net = _state.value.net.copy(pingBusy = true, pingOut = L10n.s("Проверяю…", "Checking…"))
             )
             val (out, err) = withContext(Dispatchers.IO) { Network.ping(base, token, target, iface) }
             _state.value = _state.value.copy(
-                net = _state.value.net.copy(pingBusy = false, pingOut = out ?: "Ошибка: $err")
+                net = _state.value.net.copy(pingBusy = false, pingOut = out ?: L10n.s("Ошибка: $err", "Error: $err"))
             )
         }
     }
@@ -979,7 +981,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
         val base = _state.value.settings.baseUrl
         viewModelScope.launch {
             _state.value = _state.value.copy(
-                sys = _state.value.sys.copy(actionResult = "Сохраняю…", loading = true)
+                sys = _state.value.sys.copy(actionResult = L10n.s("Сохраняю…", "Saving…"), loading = true)
             )
             val err = withContext(Dispatchers.IO) {
                 SystemInfo.writeFile(base, token, "/etc/crontabs/root", text)
@@ -1242,7 +1244,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
         val token = ubusToken ?: return
         val base = _state.value.settings.baseUrl
         viewModelScope.launch {
-            _state.value = _state.value.copy(cfg = _state.value.cfg.copy(message = "Сохраняю…"))
+            _state.value = _state.value.copy(cfg = _state.value.cfg.copy(message = L10n.s("Сохраняю…", "Saving…")))
             val err = withContext(Dispatchers.IO) {
                 UciConfig.set(base, token, config, section, option, value, isList)
             }
@@ -1250,7 +1252,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                 loadConfig(config)
                 _state.value = _state.value.copy(cfg = _state.value.cfg.copy(message = "Сохранено"))
             } else {
-                _state.value = _state.value.copy(cfg = _state.value.cfg.copy(message = "Ошибка: $err"))
+                _state.value = _state.value.copy(cfg = _state.value.cfg.copy(message = L10n.s("Ошибка: $err", "Error: $err")))
             }
         }
     }
@@ -1268,7 +1270,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
             }
             _state.value = _state.value.copy(
                 sys = _state.value.sys.copy(
-                    execOut = out?.ifBlank { "Пусто" } ?: "Ошибка: $err",
+                    execOut = out?.ifBlank { "Пусто" } ?: L10n.s("Ошибка: $err", "Error: $err"),
                     error = null
                 )
             )
@@ -1416,7 +1418,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
             }
 
             if (!start.ok || pid == 0) {
-                val msg = start.error ?: start.stderr?.takeIf { it.isNotBlank() } ?: "нет ответа"
+                val msg = start.error ?: start.stderr?.takeIf { it.isNotBlank() } ?: L10n.s("нет ответа", "no response")
                 pushLines(listOf(TermLine("Ошибка запуска: $msg", isError = true)))
                 hintAcl(start.error ?: start.stderr)
                 _state.value = _state.value.copy(term = _state.value.term.copy(busy = false))
@@ -1497,7 +1499,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                 termStreamMisses++
                 if (termStreamMisses >= 3) {
                     pushLines(
-                        listOf(TermLine("Связь с роутером потеряна: ${r.error ?: "нет ответа"}", isError = true))
+                        listOf(TermLine("Связь с роутером потеряна: ${r.error ?: L10n.s("нет ответа", "no response")}", isError = true))
                     )
                     finishTerm(_state.value.term.cwd, null, interrupted = true)
                     return
@@ -1537,7 +1539,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                 termStreamMisses++
                 if (termStreamMisses >= 3) {
                     pushLines(
-                        listOf(TermLine("Связь с роутером потеряна: ${err ?: "нет ответа"}", isError = true))
+                        listOf(TermLine("Связь с роутером потеряна: ${err ?: L10n.s("нет ответа", "no response")}", isError = true))
                     )
                     finishTerm(newCwd, null, interrupted = true)
                     return
@@ -1787,7 +1789,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                 _state.value = _state.value.copy(
                     wol = _state.value.wol.copy(
                         busy = false,
-                        error = "Не удалось: ${send.error ?: "нет ответа"}"
+                        error = "Не удалось: ${send.error ?: L10n.s("нет ответа", "no response")}"
                     )
                 )
             }
@@ -1823,7 +1825,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                 _state.value = _state.value.copy(
                     fileEdit = _state.value.fileEdit.copy(
                         loading = false,
-                        error = "Не удалось прочитать: ${err ?: "нет ответа"}"
+                        error = "Не удалось прочитать: ${err ?: L10n.s("нет ответа", "no response")}"
                     )
                 )
                 return@launch
@@ -1936,7 +1938,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                 _state.value = _state.value.copy(
                     fileEdit = _state.value.fileEdit.copy(
                         saving = false,
-                        error = "Не удалось обновить ACL: ${r.error ?: "нет ответа"}"
+                        error = "Не удалось обновить ACL: ${r.error ?: L10n.s("нет ответа", "no response")}"
                     )
                 )
             }
@@ -2035,12 +2037,12 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                     val modelName = board.optJSONObject("model")?.optString("name")
                         ?.ifBlank { null }
                         ?: board.optString("model").takeIf { it.isNotBlank() && !it.startsWith("{") }
-                    modelName?.let { out.add("Модель" to it) }
+                    modelName?.let { out.add(L10n.s("Модель", "Model") to it) }
 
                     board.optString("hostname").takeIf { it.isNotBlank() }
                         ?.let { out.add("Имя" to it) }
                 } else if (err != null) {
-                    out.add("Ошибка" to err)
+                    out.add(L10n.s("Ошибка", "Error") to err)
                 }
 
                 // Прошивка и ядро — отдельными файлами
@@ -2050,7 +2052,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                     ?.substringAfter("=")
                     ?.trim()?.trim('\'', '"')
                     ?.takeIf { it.isNotBlank() }
-                    ?.let { out.add("Прошивка" to it) }
+                    ?.let { out.add(L10n.s("Прошивка", "Firmware") to it) }
 
                 SystemInfo.readFile(base, token, "/proc/sys/kernel/osrelease").first
                     ?.trim()?.takeIf { it.isNotBlank() }
@@ -2062,7 +2064,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                     val d = sec.toLong() / 86400
                     val h = (sec.toLong() % 86400) / 3600
                     val m = (sec.toLong() % 3600) / 60
-                    uptimeText = "${d}д ${h}ч ${m}м"
+                    uptimeText = L10n.s("${d}д ${h}ч ${m}м", "${d}d ${h}h ${m}m")
                 }
 
                 var ramText: String? = null
@@ -2140,7 +2142,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
         val token = ubusToken ?: return
         val base = _state.value.settings.baseUrl
         viewModelScope.launch {
-            _state.value = _state.value.copy(cfg = _state.value.cfg.copy(message = "Сохраняю…"))
+            _state.value = _state.value.copy(cfg = _state.value.cfg.copy(message = L10n.s("Сохраняю…", "Saving…")))
             val err = withContext(Dispatchers.IO) {
                 UciConfig.setMany(base, token, "network", iface, values)
             }
@@ -2163,7 +2165,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
         val token = ubusToken ?: return
         val base = _state.value.settings.baseUrl
         viewModelScope.launch {
-            _state.value = _state.value.copy(cfg = _state.value.cfg.copy(message = "Применяю…"))
+            _state.value = _state.value.copy(cfg = _state.value.cfg.copy(message = L10n.s("Применяю…", "Applying…")))
             val reply = withContext(Dispatchers.IO) {
                 Ubus.call(base, token, "network", "reload", org.json.JSONObject(), 40_000)
             }

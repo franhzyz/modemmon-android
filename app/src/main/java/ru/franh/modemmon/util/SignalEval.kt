@@ -1,13 +1,15 @@
 package ru.franh.modemmon.util
 
+import ru.franh.modemmon.util.L10n
+
 import androidx.compose.ui.graphics.Color
 
 /** Метрики, по которым можно наводить антенну. */
 enum class Metric(val key: String, val title: String, val unit: String) {
-    SINR("sinr", "SINR", "дБ"),
-    RSRP("rsrp", "RSRP", "дБм"),
-    RSRQ("rsrq", "RSRQ", "дБ"),
-    RSSI("rssi", "RSSI", "дБм");
+    SINR("sinr", "SINR", L10n.s("дБ", "dB")),
+    RSRP("rsrp", "RSRP", L10n.s("дБм", "dBm")),
+    RSRQ("rsrq", "RSRQ", L10n.s("дБ", "dB")),
+    RSSI("rssi", "RSSI", L10n.s("дБм", "dBm"));
 
     companion object {
         fun byKey(key: String): Metric = entries.firstOrNull { it.key == key } ?: SINR
@@ -26,31 +28,31 @@ object SignalEval {
 
     fun quality(metric: Metric, v: Double): Quality = when (metric) {
         Metric.RSRP -> when {
-            v >= -80 -> Quality("Отличный", GOOD, 100)
-            v >= -90 -> Quality("Хороший", LIME, 80)
-            v >= -100 -> Quality("Средний", AMBER, 50)
-            else -> Quality("Плохой", RED, 15)
+            v >= -80 -> Quality(L10n.s("Отличный", "Excellent"), GOOD, 100)
+            v >= -90 -> Quality(L10n.s("Хороший", "Good"), LIME, 80)
+            v >= -100 -> Quality(L10n.s("Средний", "Fair"), AMBER, 50)
+            else -> Quality(L10n.s("Плохой", "Poor"), RED, 15)
         }
 
         Metric.SINR -> when {
-            v >= 20 -> Quality("Идеальный", GOOD, 100)
-            v >= 13 -> Quality("Хороший", LIME, 75)
-            v >= 0 -> Quality("Шумный", AMBER, 40)
-            else -> Quality("Критичный", RED, 5)
+            v >= 20 -> Quality(L10n.s("Идеальный", "Ideal"), GOOD, 100)
+            v >= 13 -> Quality(L10n.s("Хороший", "Good"), LIME, 75)
+            v >= 0 -> Quality(L10n.s("Шумный", "Noisy"), AMBER, 40)
+            else -> Quality(L10n.s("Критичный", "Critical"), RED, 5)
         }
 
         Metric.RSSI -> when {
-            v >= -65 -> Quality("Сильный", GOOD, 100)
-            v >= -75 -> Quality("Нормальный", LIME, 75)
-            v >= -85 -> Quality("Слабый", AMBER, 45)
-            else -> Quality("Очень слабый", RED, 10)
+            v >= -65 -> Quality(L10n.s("Сильный", "Strong"), GOOD, 100)
+            v >= -75 -> Quality(L10n.s("Нормальный", "Normal"), LIME, 75)
+            v >= -85 -> Quality(L10n.s("Слабый", "Weak"), AMBER, 45)
+            else -> Quality(L10n.s("Очень слабый", "Very weak"), RED, 10)
         }
 
         Metric.RSRQ -> when {
-            v >= -10 -> Quality("Отличный", GOOD, 100)
-            v >= -15 -> Quality("Хороший", LIME, 75)
-            v >= -20 -> Quality("Средний", AMBER, 45)
-            else -> Quality("Плохой", RED, 12)
+            v >= -10 -> Quality(L10n.s("Отличный", "Excellent"), GOOD, 100)
+            v >= -15 -> Quality(L10n.s("Хороший", "Good"), LIME, 75)
+            v >= -20 -> Quality(L10n.s("Средний", "Fair"), AMBER, 45)
+            else -> Quality(L10n.s("Плохой", "Poor"), RED, 12)
         }
     }
 
@@ -91,19 +93,19 @@ object SignalEval {
     fun tips(metric: Metric, v: Double, sinr: Double?, rsrp: Double?, hasNr: Boolean): List<String> {
         val out = mutableListOf<String>()
         if (sinr != null && sinr < 5) {
-            out += "SINR низкий — соты мешают друг другу. Сместите антенну в сторону или поднимите выше."
+            out += L10n.s("SINR низкий — соты мешают друг другу. Сместите антенну в сторону или поднимите выше.", "Low SINR — cells interfere with each other. Move the antenna sideways or raise it higher.")
         }
         if (rsrp != null && rsrp < -110) {
-            out += "Очень слабый RSRP: антенна далеко от вышки либо смотрит не туда."
+            out += L10n.s("Очень слабый RSRP: антенна далеко от вышки либо смотрит не туда.", "Very weak RSRP: the antenna is far from the tower or pointing the wrong way.")
         }
         if (rsrp != null && rsrp > -85 && sinr != null && sinr < 10) {
-            out += "Сигнал сильный, но грязный — типичный признак переотражений. Попробуйте изменить поляризацию."
+            out += L10n.s("Сигнал сильный, но грязный — типичный признак переотражений. Попробуйте изменить поляризацию.", "Strong but dirty signal — a typical sign of reflections. Try changing the polarization.")
         }
         if (hasNr && metric == Metric.SINR && v < 10) {
-            out += "Для 5G NR держите SINR выше 13 дБ — иначе скорость падает до LTE."
+            out += L10n.s("Для 5G NR держите SINR выше 13 дБ — иначе скорость падает до LTE.", "For 5G NR keep SINR above 13 dB — otherwise speed drops to LTE levels.")
         }
         if (out.isEmpty()) {
-            out += "Показатели ровные. Крутите антенну небольшими шагами по 10–15° и следите за «Δ до пика»."
+            out += L10n.s("Показатели ровные. Крутите антенну небольшими шагами по 10–15° и следите за «Δ до пика».", "Readings are steady. Turn the antenna in small 10–15° steps and watch “Δ to peak”.")
         }
         return out
     }

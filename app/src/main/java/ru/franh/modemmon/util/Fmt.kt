@@ -1,12 +1,14 @@
 package ru.franh.modemmon.util
 
+import ru.franh.modemmon.util.L10n
+
 import java.util.Locale
 
 object Fmt {
 
     fun bytes(v: Long?): String {
         if (v == null || v < 0) return "—"
-        val units = arrayOf("Б", "КБ", "МБ", "ГБ", "ТБ")
+        val units = arrayOf(L10n.s("Б", "B"), L10n.s("КБ", "KB"), L10n.s("МБ", "MB"), L10n.s("ГБ", "GB"), L10n.s("ТБ", "TB"))
         var value = v.toDouble()
         var i = 0
         while (value >= 1024 && i < units.size - 1) {
@@ -20,10 +22,10 @@ object Fmt {
     fun rate(bps: Long?): String {
         if (bps == null || bps < 0) return "—"
         return when {
-            bps >= 1_000_000_000 -> String.format(Locale.US, "%.2f Гбит/с", bps / 1e9)
-            bps >= 1_000_000 -> String.format(Locale.US, "%.1f Мбит/с", bps / 1e6)
-            bps >= 1_000 -> String.format(Locale.US, "%.0f кбит/с", bps / 1e3)
-            else -> "$bps бит/с"
+            bps >= 1_000_000_000 -> String.format(Locale.US, L10n.s("%.2f Гбит/с", "%.2f Gbit/s"), bps / 1e9)
+            bps >= 1_000_000 -> String.format(Locale.US, L10n.s("%.1f Мбит/с", "%.1f Mbit/s"), bps / 1e6)
+            bps >= 1_000 -> String.format(Locale.US, L10n.s("%.0f кбит/с", "%.0f kbit/s"), bps / 1e3)
+            else -> L10n.s("$bps бит/с", "$bps bit/s")
         }
     }
 
@@ -34,10 +36,10 @@ object Fmt {
         val m = (seconds % 3600) / 60
         val s = seconds % 60
         return buildString {
-            if (d > 0) append("${d}д ")
-            if (h > 0 || d > 0) append("${h}ч ")
-            if (m > 0 || h > 0 || d > 0) append("${m}м ")
-            append("${s}с")
+            if (d > 0) append(L10n.s("${d}д ", "${d}d "))
+            if (h > 0 || d > 0) append(L10n.s("${h}ч ", "${h}h "))
+            if (m > 0 || h > 0 || d > 0) append(L10n.s("${m}м ", "${m}m "))
+            append(L10n.s("${s}с", "${s}s"))
         }
     }
 
@@ -48,12 +50,12 @@ object Fmt {
         if (v == null) "—" else String.format(Locale.US, "%.1f", v)
 
     fun freq(mhz: Double?): String =
-        if (mhz == null) "—" else String.format(Locale.US, "%.1f МГц", mhz)
+        if (mhz == null) "—" else String.format(Locale.US, L10n.s("%.1f МГц", "%.1f MHz"), mhz)
 
     fun mhz(value: Double?): String =
         if (value == null) "—" else String.format(
             Locale.US,
-            if (value % 1.0 == 0.0) "%.0f МГц" else "%.1f МГц",
+            if (value % 1.0 == 0.0) L10n.s("%.0f МГц", "%.0f MHz") else L10n.s("%.1f МГц", "%.1f MHz"),
             value
         )
 
@@ -65,7 +67,7 @@ object Fmt {
     fun microseconds(value: Double?): String =
         if (value == null) "—" else String.format(
             Locale.US,
-            if (value % 1.0 == 0.0) "%.0f мкс" else "%.1f мкс",
+            if (value % 1.0 == 0.0) L10n.s("%.0f мкс", "%.0f µs") else L10n.s("%.1f мкс", "%.1f µs"),
             value
         )
 

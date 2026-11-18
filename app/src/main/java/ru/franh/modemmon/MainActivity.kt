@@ -1,5 +1,7 @@
 package ru.franh.modemmon
 
+import ru.franh.modemmon.util.L10n
+
 import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
@@ -119,9 +121,9 @@ private data class Tab(val title: String, val icon: ImageVector)
 
 /** Вкладки прежнего приложения: живут вместе на одном экране внутри панели. */
 private val TABS = listOf(
-    Tab("Монитор", Icons.Filled.Home),
-    Tab("Сота", Icons.Filled.Place),
-    Tab("Трафик", Icons.Filled.List)
+    Tab(L10n.s("Монитор", "Monitor"), Icons.Filled.Home),
+    Tab(L10n.s("Сота", "Cell"), Icons.Filled.Place),
+    Tab(L10n.s("Трафик", "Traffic"), Icons.Filled.List)
 )
 
 @Composable
@@ -278,9 +280,9 @@ private fun App() {
                         Text(
                             when {
                                 current.startsWith("ifaceedit:") ->
-                                    "Изменить · " + current.removePrefix("ifaceedit:")
+                                    L10n.s("Изменить · ", "Edit · ") + current.removePrefix("ifaceedit:")
                                 current.startsWith("ifacecfg:") ->
-                                    "Параметры · " + current.removePrefix("ifacecfg:")
+                                    L10n.s("Параметры · ", "Options · ") + current.removePrefix("ifacecfg:")
                                 else -> navItem(current).title
                             },
                             fontSize = 18.sp,
@@ -289,7 +291,7 @@ private fun App() {
                     },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Filled.Menu, contentDescription = "Меню")
+                            Icon(Icons.Filled.Menu, contentDescription = L10n.s("Меню", "Menu"))
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -311,12 +313,12 @@ private fun App() {
 
                     "overview" -> OverviewScreen(state, vm)
                     "routes" -> ExecScreen(
-                        state, vm, "Маршруты", "/sbin/ip", listOf("route", "show"),
-                        "Таблица маршрутизации ядра"
+                        state, vm, L10n.s("Маршруты", "Routes"), "/sbin/ip", listOf("route", "show"),
+                        L10n.s("Таблица маршрутизации ядра", "Kernel routing table")
                     )
                     "statusfw" -> ExecScreen(
-                        state, vm, "Firewall (статус)", "/sbin/fw4", listOf("print"),
-                        "Действующие правила nftables"
+                        state, vm, L10n.s("Firewall (статус)", "Firewall (status)"), "/sbin/fw4", listOf("print"),
+                        L10n.s("Действующие правила nftables", "Active nftables rules")
                     )
                     "channels" -> ChannelsScreen(state, vm)
                     "wol" -> WolScreen(state, vm)
@@ -326,7 +328,7 @@ private fun App() {
                     "log" -> LogScreen(state, vm)
                     "procs" -> ProcessesScreen(state, vm)
 
-                    "system" -> ConfigScreen(state, vm, "system", "Система")
+                    "system" -> ConfigScreen(state, vm, "system", L10n.s("Система", "System"))
                     "term" -> TermScreen(state, vm)
                     "cron" -> CrontabScreen(state, vm)
                     "leds" -> LedsScreen(state, vm)
@@ -339,13 +341,13 @@ private fun App() {
                     "at" -> AtScreen(state, vm)
                     "sms" -> SmsScreen(state, vm)
                     "ussd" -> UssdScreen(state, vm)
-                    "modemcfg" -> ConfigScreen(state, vm, "medvemodem", "Настройки MedveModem")
+                    "modemcfg" -> ConfigScreen(state, vm, "medvemodem", L10n.s("Настройки MedveModem", "MedveModem settings"))
 
                     "ifaces" -> IfacesScreen(state, vm) { name -> current = "ifaceedit:$name" }
                     "wifi" -> WifiScreen(state, vm)
                     "nroutes" -> RoutesScreen(state, vm)
                     "clients" -> ClientsScreen(state, vm)
-                    "dns" -> ConfigScreen(state, vm, "dhcp", "DHCP и DNS")
+                    "dns" -> ConfigScreen(state, vm, "dhcp", L10n.s("DHCP и DNS", "DHCP & DNS"))
                     "ping" -> PingScreen(state, vm)
                     "nfw" -> ConfigScreen(state, vm, "firewall", "Firewall")
 
@@ -367,7 +369,7 @@ private fun App() {
                         current.startsWith("ifacecfg:") -> {
                             val name = current.removePrefix("ifacecfg:")
                             ConfigScreen(
-                                state, vm, "network", "Интерфейс $name",
+                                state, vm, "network", L10n.s("Интерфейс $name", "Interface $name"),
                                 onlySection = name
                             )
                         }
