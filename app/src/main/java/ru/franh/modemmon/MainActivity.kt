@@ -86,7 +86,6 @@ import ru.franh.modemmon.ui.RebootScreen
 import ru.franh.modemmon.ui.RoutesScreen
 import ru.franh.modemmon.ui.ServicesScreen
 import ru.franh.modemmon.ui.SettingsScreen
-import ru.franh.modemmon.ui.SpeedTestScreen
 import ru.franh.modemmon.ui.SmsScreen
 import ru.franh.modemmon.ui.TermScreen
 import ru.franh.modemmon.ui.TrafficScreen
@@ -348,7 +347,6 @@ private fun App() {
                     "clients" -> ClientsScreen(state, vm)
                     "dns" -> ConfigScreen(state, vm, "dhcp", "DHCP и DNS")
                     "ping" -> PingScreen(state, vm)
-                    "speed" -> SpeedTestScreen(state, vm)
                     "nfw" -> ConfigScreen(state, vm, "firewall", "Firewall")
 
                     "forkop" -> ForkopScreen(state, vm)

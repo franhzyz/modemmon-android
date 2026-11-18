@@ -11,7 +11,8 @@ data class Settings(
     val demo: Boolean = false,
     val sound: Boolean = false,
     val vibrate: Boolean = false,
-    val metric: String = "sinr"
+    val metric: String = "sinr",
+    val lang: String = "ru"
 ) {
     val fullUrl: String
         get() {
@@ -40,7 +41,8 @@ class Prefs(context: Context) {
             demo = sp.getBoolean("demo", false),
             sound = sp.getBoolean("sound", false),
             vibrate = sp.getBoolean("vibrate", false),
-            metric = sp.getString("metric", "sinr") ?: "sinr"
+            metric = sp.getString("metric", "sinr") ?: "sinr",
+            lang = sp.getString("lang", "ru") ?: "ru"
         )
     }
 
@@ -53,6 +55,7 @@ class Prefs(context: Context) {
             .putBoolean("sound", s.sound)
             .putBoolean("vibrate", s.vibrate)
             .putString("metric", s.metric)
+            .putString("lang", s.lang)
             .apply()
     }
 }

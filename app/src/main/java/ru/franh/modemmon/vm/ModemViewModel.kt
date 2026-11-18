@@ -25,7 +25,6 @@ import ru.franh.modemmon.data.ModemApi
 import ru.franh.modemmon.data.ModemSnapshot
 import ru.franh.modemmon.data.Network
 import ru.franh.modemmon.data.Prefs
-import ru.franh.modemmon.data.SpeedTest
 import ru.franh.modemmon.data.Profiles
 import ru.franh.modemmon.data.RouterProfile
 import ru.franh.modemmon.data.Routes
@@ -286,6 +285,10 @@ val TERM_PRESETS = listOf(
 class ModemViewModel(app: Application) : AndroidViewModel(app) {
 
     private val prefs = Prefs(app)
+
+    init {
+        ru.franh.modemmon.util.L10n.lang = prefs.load().lang
+    }
     private val profilesRepo = Profiles(app)
     private val creds = Creds(app)
 
@@ -413,6 +416,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
             new.baseUrl != old.baseUrl ||
             new.path != old.path
         prefs.save(new)
+        ru.franh.modemmon.util.L10n.lang = new.lang
         _state.value = _state.value.copy(settings = new)
         if (restart) {
             if (new.demo != old.demo) resetPeaks()
@@ -911,22 +915,6 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     // ---------- Системные экраны ----------
-
-    /** Speed test: замер канала роутера. Результат уходит в колбэк экрана. */
-    fun speedTest(downMb: Int, upMb: Int, withUp: Boolean, onDone: (SpeedTest.Result?, String?) -> Unit) {
-        val token = ubusToken ?: run {
-            onDone(null, "Нет подключения к роутеру")
-            return
-        }
-        val base = _state.value.settings.baseUrl
-        viewModelScope.launch {
-            val started = System.currentTimeMillis()
-            val (res, err) = withContext(Dispatchers.IO) {
-                SpeedTest.run(base, token, downMb, upMb, withUp, started)
-            }
-            onDone(res, err)
-        }
-    }
 
     private fun sysLoad(block: suspend (String, String) -> Unit) {
         val token = ubusToken ?: return
