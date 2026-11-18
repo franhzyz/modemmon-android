@@ -19,20 +19,27 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            // Локальный ключ для сборки release-APK. Пароль — в этом файле,
-            // потому что проект домашний; для публикации вынесите в ~/.gradle.
-            storeFile = rootProject.file("keystore/modemmon.jks")
-            storePassword = "modemmon"
-            keyAlias = "modemmon"
-            keyPassword = "modemmon"
+        // Ключ и пароли лежат в local.properties (вне репозитория).
+        // Если их нет — release собирается неподписанным.
+        val lp = java.util.Properties()
+        val lpFile = rootProject.file("local.properties")
+        if (lpFile.exists()) lpFile.inputStream().use { lp.load(it) }
+        val ksPath = lp.getProperty("modemmon.keystore")
+        val ksPass = lp.getProperty("modemmon.storePassword")
+        if (ksPath != null && ksPass != null) {
+            create("release") {
+                storeFile = file(ksPath)
+                storePassword = ksPass
+                keyAlias = lp.getProperty("modemmon.keyAlias") ?: "modemmon"
+                keyPassword = lp.getProperty("modemmon.keyPassword") ?: ksPass
+            }
         }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = if (signingConfigs.names.contains("release")) signingConfigs.getByName("release") else null
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {
