@@ -418,6 +418,7 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
             new.baseUrl != old.baseUrl ||
             new.path != old.path
         prefs.save(new)
+        ru.franh.modemmon.data.RouterNet.setWifiOnly(new.wifiOnly)
         ru.franh.modemmon.util.L10n.lang = new.lang
         _state.value = _state.value.copy(settings = new)
         if (restart) {
@@ -2098,16 +2099,31 @@ class ModemViewModel(app: Application) : AndroidViewModel(app) {
                 val zones = SystemInfo.thermals(base, token).first
                 val routerTemp = zones["cpu-thermal"] ?: zones.values.maxOrNull()
 
-                // Температура модема: проприетарная AT^TEMP? (Qualcomm)
+                // Температура модема: AT-команда по модели
+                // (FM350/MTK: GTSENRDTEMP=1 — тысячные °C; Qualcomm: AT^TEMP?)
                 var modemTemp: Double? = null
                 if (devId != null) {
-                    val reply = MedveModem.atCommand(base, token, devId, "AT^TEMP?", 3000).first
-                    val temps = reply?.lines.orEmpty().mapNotNull { line ->
-                        Regex("(\\d+)\\s*C").find(line)?.groupValues?.get(1)?.toDoubleOrNull()
+                    val placeholders = listOf(32767.0, -32767.0, -32768.0, 65535.0, -127.0, -28479.0)
+                    fun tempOf(ls: List<String>): Double? {
+                        var best: Double? = null
+                        for (line in ls) {
+                            val body = line.substringAfter(":")
+                            for (part in body.split(",")) {
+                                var v = part.trim().toDoubleOrNull() ?: continue
+                                if (v == 0.0 || v in placeholders) continue
+                                if (v >= 1000 || v <= -1000) v /= 1000
+                                if (v >= -40 && v <= 125 && (best == null || v > (best ?: 0.0))) best = v
+                            }
+                        }
+                        return best
                     }
-                    modemTemp = temps.maxOrNull()
+                    val gt = MedveModem.atCommand(base, token, devId, "AT+GTSENRDTEMP=1", 3000).first
+                    modemTemp = tempOf(gt?.lines.orEmpty())
+                    if (modemTemp == null) {
+                        val qcom = MedveModem.atCommand(base, token, devId, "AT^TEMP?", 3000).first
+                        modemTemp = tempOf(qcom?.lines.orEmpty())
+                    }
                 }
-
                 OverviewData(out, ramPct, loadPct, cores, uptimeText, ramText, routerTemp, modemTemp)
             }
             _state.value = _state.value.copy(

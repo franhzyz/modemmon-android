@@ -11,7 +11,7 @@ object ModemApi {
         var conn: HttpURLConnection? = null
         return try {
             val u = URL(url)
-            conn = (u.openConnection() as HttpURLConnection).apply {
+            conn = RouterNet.open(u).apply {
                 requestMethod = "GET"
                 connectTimeout = timeoutMs
                 readTimeout = timeoutMs
