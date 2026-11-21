@@ -49,6 +49,20 @@ sh install-modemmon.sh
 
 ```sh
 apk add --allow-untrusted ./modem-telemetry-2.6.1-r0.apk
+
+## Патч для RNDIS-модемов
+
+Если модем работает в RNDIS-режиме (Fibocom FM350-GL и подобные —
+ModemManager их не видит, и данные модема в приложении пропадают),
+примени скрипт-патчер на роутере:
+
+```sh
+sh patch-telemetry-rndis.sh
+```
+
+Он возвращает данные модема (сигнал, оператор, регистрацию, SIM,
+модель/прошивку, температуру GTSENRDTEMP) через движок medvemodem.
+Идемпотентен, создаёт резервную копию. Скрипт есть в релизах.
 ```
 
 `modem-telemetry` собран с `arch=noarch`: один и тот же apk подходит для
