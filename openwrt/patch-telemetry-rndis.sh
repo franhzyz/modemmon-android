@@ -101,7 +101,25 @@ fi
 MMEOF
 awk -v ins="$(cat /tmp/mm_patch_a.txt)" 'index($0, "registration_restriction=$(quoted_field") && !done { print ins; done=1 } { print }' "$T" > "$T.new" && mv "$T.new" "$T"
 
-chmod +x "$T"
+# --- Блок 5: RNDIS v3 — SIM ICCID/IMSI, IP, MTU, сессия, роуминг, APN, NR NSA ---
+cat > /tmp/mm_patch_c.txt <<'MMEOF'
+    # RNDIS v3: SIM ICCID/IMSI (маскированные), APN, сессия, роуминг/пакетный сервис, NR NSA
+    v=$(uf '@.sim.iccid'); if [ -n "$v" ]; then iccid=$v; iccid_masked=$(mask_id "$iccid"); fi
+    v=$(uf '@.sim.imsi'); if [ -n "$v" ]; then imsi=$v; imsi_masked=$(mask_id "$imsi"); fi
+    v=$(ip -4 addr show eth1 2>/dev/null | grep -oE "inet [0-9./]+" | awk '{print $2}'); if [ -n "$v" ]; then ipv4_address=${v%%/*}; ipv4_prefix=${v#*/}; fi
+    v=$(cat /sys/class/net/eth1/mtu 2>/dev/null); [ -n "$v" ] && ipv4_mtu=$v
+    v=$(uf '@.session.since'); if [ -n "$v" ]; then connect_time=$((temperature_now - v)); fi
+    cgd=$(rndis_at_cmd 'AT+CGDCONT?' 2>/dev/null)
+    v=$(printf '%s\n' "$cgd" | grep -oE '"[a-z0-9.\-]+"' | sed -n '2p' | tr -d '"')
+    [ -n "$v" ] && apn=$v
+    case "$registration" in
+        home) roaming=false; packet_service=есть ;;
+    esac
+    case "$signal_history_json" in *nr-nsa*) nr_nsa=1 ;; esac
+MMEOF
+awk -v ins="$(cat /tmp/mm_patch_c.txt)" 'index($0, "modemmanager.sim_card.operator_code") && !done { print ins; done=1 } { print }' "$T" > "$T.new" && mv "$T.new" "$T"
+
+
 rm -f /tmp/mm_patch_b.txt /tmp/mm_patch_a.txt
 echo "Патч применён ✓. Резерв: $T.bak-rndis"
 echo "Проверка: открой ModemMon — данные модема должны появиться."
