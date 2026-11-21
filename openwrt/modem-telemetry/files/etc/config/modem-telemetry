@@ -1,0 +1,18 @@
+
+config modem-telemetry 'main'
+	option enabled '1'
+	option qmi_device '/dev/cdc-wdm0'
+	option net_device 'eth1'
+	option mm_iface 'mm0'
+	option command_timeout '5'
+	option at_temp_timeout '1'
+	option request_timeout '4'
+	option temp_cache_ttl '60'
+	option medvemodem_device 'auto'
+	option use_engine '1'
+	option qmi_detail '1'
+	option qmi_extra '0'
+	option ubus_cells '1'
+	option iface_sync '0'
+	option snapshot_ttl '3'
+

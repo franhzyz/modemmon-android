@@ -1,0 +1,50 @@
+#!/bin/sh /etc/rc.common
+# modem-telemetry init. The collector itself is not a daemon — uhttpd runs the
+# CGI on demand and the CGI refreshes one shared snapshot in the background.
+#
+# USB-path auto-repair (network.<iface>.device) is NOT done here by default:
+# since MedveModem 0.15.0 the engine repairs interfaces itself
+# (core.repair_interfaces, on by default) and two writers to
+# /etc/config/network would conflict. Enable modem-telemetry.main.iface_sync=1
+# only for plain ModemManager setups without the MedveModem engine.
+
+START=99
+STOP=10
+
+# NOTE: do NOT set USE_PROCD here, not even USE_PROCD=0. rc.common installs
+# its procd start()/stop() wrappers whenever USE_PROCD is a NON-EMPTY string
+# ([ -n "$USE_PROCD" ]), which would silently override the start() below and
+# the service would do nothing. Leaving USE_PROCD unset keeps the legacy
+# dispatch: rc.common calls the start()/stop()/reload() defined in this file.
+
+PROG=/usr/bin/modem-telemetry.sh
+IFACE_SYNC=/usr/bin/modem-telemetry-iface.sh
+
+start() {
+	config_load modem-telemetry
+	local enabled iface_sync
+	config_get enabled main enabled 1
+	[ "$enabled" = "1" ] || return 0
+
+	# uhttpd serves the CGI; make sure the files are executable.
+	[ -x "$PROG" ] || chmod +x "$PROG" 2>/dev/null
+
+	# Optional USB-path re-sync, off by default (the MedveModem engine owns
+	# network.<iface>.device via repair_interfaces). The engine needs a few
+	# seconds after boot to enumerate the modems; the sync runs detached and
+	# waits for them on its own. setsid matters: a plain background job is
+	# SIGHUP-killed when the rc.common shell that started it exits.
+	config_get iface_sync main iface_sync 0
+	if [ "$iface_sync" = "1" ] && [ -x "$IFACE_SYNC" ]; then
+		setsid sh -c "sleep 3; exec $IFACE_SYNC" >/dev/null 2>&1 &
+	fi
+}
+
+stop() {
+	# Nothing to stop: no daemon, no open sockets owned by this service.
+	return 0
+}
+
+reload() {
+	start
+}
