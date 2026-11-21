@@ -210,8 +210,13 @@ data class ModemSnapshot(
             val devObj = root.optJSONObject("device")
             val simObj = root.optJSONObject("sim")
             val bearerObj = root.optJSONObject("bearer")
+            val hist = parseHistory(root.optJSONObject("signal_history"))
 
-            val lte = parseLink(lteObj, root, "lte_")
+            val lteRaw = parseLink(lteObj, root, "lte_")
+            val histLast = hist.lastOrNull()
+            val lte = if (lteRaw?.rsrp == null && histLast?.lteRsrp != null) {
+                lteRaw.copy(present = true, rsrp = histLast.lteRsrp, rsrq = histLast.lteRsrq, sinr = histLast.lteSinr)
+            } else lteRaw
             val nr = parseLink(nrObj, root, "nr_")
             val tempC = devObj?.num("temp_c") ?: root.num("temp_c")
             val explicitTemp = devObj?.str("temp").orEmpty().ifBlank { root.str("temp") }
@@ -236,7 +241,7 @@ data class ModemSnapshot(
                 ts = normalizeTimestamp(root.long("ts")),
                 online = onlineFlag,
                 error = root.str("error").ifBlank { null },
-                rat = network,
+                rat = if (network.isNullOrBlank()) histLast?.tech ?: "" else network,
                 operator = root.str("operator").ifBlank { root.str("network_operator") },
                 plmn = plmn,
                 caActive = caObj?.bool("active") ?: root.bool("ca_active"),
@@ -316,7 +321,7 @@ data class ModemSnapshot(
                 ),
                 engine = parseEngine(root.optJSONObject("engine")),
                 antennas = parseAntennas(root.optJSONArray("antennas")),
-                signalHistory = parseHistory(root.optJSONObject("signal_history"))
+                signalHistory = hist
             )
         }
 
