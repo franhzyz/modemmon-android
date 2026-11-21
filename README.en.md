@@ -25,24 +25,34 @@ OpenWrt router (tested with Foxconn T99W175, Snapdragon X55, QMI, OrangePi Zero3
 
 ## Requirements
 
-The app works only with packages from
-[https://github.com/Medvedolog/medvemodem](https://github.com/Medvedolog/medvemodem)
-(medvemodem, luci-app-medvemodem and related packages).
+The app uses two independent parts:
+
+- **Modem engine** — `medvemodem`, `luci-app-medvemodem` and related packages
+  from [Medvedolog/medvemodem](https://github.com/Medvedolog/medvemodem).
+  They provide the `medvemodem` ubus object and channel control.
+- **Our telemetry package** — `modem-telemetry`. It serves
+  `/cgi-bin/modem-telemetry` (schema v2) and is attached to
+  [this repository's releases](https://github.com/franhzyz/modemmon-android/releases).
+  It is not included in the Medvedolog archives.
 
 ## Installing packages on the router
 
-Router script: [`openwrt/install-modemmon.sh`](openwrt/install-modemmon.sh) —
-detects the architecture and OpenWrt version itself, downloads and installs
-the packages. Run it over SSH:
+The script [`openwrt/install-modemmon.sh`](openwrt/install-modemmon.sh) installs
+Medvedolog's packages and detects the architecture and OpenWrt version itself:
 
 ```sh
 sh install-modemmon.sh
 ```
 
-Ready packages (tar.gz for aarch64_cortex-a53 / aarch64_generic / x86_64,
-OpenWrt 24.10 and 25.12) are in
-[Medvedolog/medvemodem releases](https://github.com/Medvedolog/medvemodem/releases)
-and are attached to this repository's releases.
+Then install our telemetry package:
+
+```sh
+apk add --allow-untrusted ./modem-telemetry-2.6.1-r0.apk
+```
+
+`modem-telemetry` is built as `arch=noarch`: the same APK works on
+aarch64_cortex-a53, aarch64_generic and x86_64, on OpenWrt 24.10 and 25.12.
+Architecture-named archives are only aliases containing the same APK.
 
 ## Installing the app
 

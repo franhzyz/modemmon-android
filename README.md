@@ -26,24 +26,34 @@ OrangePi Zero3).
 
 ## Требования
 
-Приложение работает только с пакетами из репозитория
-[https://github.com/Medvedolog/medvemodem](https://github.com/Medvedolog/medvemodem)
-(medvemodem, luci-app-medvemodem и связанные пакеты).
+Приложение использует две независимые части:
+
+- **Движок модема** — `medvemodem`, `luci-app-medvemodem` и связанные пакеты из
+  [Medvedolog/medvemodem](https://github.com/Medvedolog/medvemodem). Они дают
+  ubus-объект `medvemodem` и управление каналами.
+- **Наш пакет телеметрии** — `modem-telemetry`. Он отдаёт
+  `/cgi-bin/modem-telemetry` (schema v2) и прикреплён к
+  [релизам этого репозитория](https://github.com/franhzyz/modemmon-android/releases).
+  В архивах Medvedolog его нет.
 
 ## Установка пакетов на роутер
 
-Скрипт для роутера: [`openwrt/install-modemmon.sh`](openwrt/install-modemmon.sh) —
-сам определяет архитектуру и версию OpenWrt, скачивает и ставит пакеты.
-Запуск на роутере по SSH:
+Скрипт [`openwrt/install-modemmon.sh`](openwrt/install-modemmon.sh) ставит
+пакеты Medvedolog; он сам определяет архитектуру и версию OpenWrt:
 
 ```sh
 sh install-modemmon.sh
 ```
 
-Готовые пакеты (tar.gz для aarch64_cortex-a53 / aarch64_generic / x86_64,
-OpenWrt 24.10 и 25.12) лежат в
-[релизах Medvedolog/medvemodem](https://github.com/Medvedolog/medvemodem/releases)
-и прикреплены к релизам этого репозитория.
+Дополнительно установите наш пакет телеметрии:
+
+```sh
+apk add --allow-untrusted ./modem-telemetry-2.6.1-r0.apk
+```
+
+`modem-telemetry` собран с `arch=noarch`: один и тот же apk подходит для
+aarch64_cortex-a53, aarch64_generic и x86_64, OpenWrt 24.10 и 25.12. Архивы с
+указанием архитектуры — всего лишь псевдонимы с тем же apk внутри.
 
 ## Установка приложения
 

@@ -1,0 +1,8 @@
+15458969e03ca98440f701c1b10a8e34854411f52d39a2611e45a02ffb0d6b46 *modem-telemetry-2.6.1-r0.apk
+5be14eb8d3c8be23f634b434acb7705de1b8c8cd70a04eb5cbdd60736aad5c8e *modem-telemetry-2.6.1-r0-aarch64_cortex-a53-24.10.tar.gz
+a2a8bb21a1ea9184a99c4bf6178f8d88eb7437af13540da9c219b6d5b589e525 *modem-telemetry-2.6.1-r0-aarch64_cortex-a53-25.12.tar.gz
+176691f4e626231804487a0629eea5ec11d93351f5e56b83209b3f560713d77f *modem-telemetry-2.6.1-r0-aarch64_generic-24.10.tar.gz
+aeccc87d04e7a2905377613250f4b99d9b4bee69e13929777562839f28b07089 *modem-telemetry-2.6.1-r0-aarch64_generic-25.12.tar.gz
+ad7bc01b2786dd0c3a5d41d6d9458021b3d7ad2e3dbe5f9cbdbe2fe598468c03 *modem-telemetry-2.6.1-r0-noarch.tar.gz
+a478755c95ff8b8320d3df6b25808077f103fab51faffc9ae3f70a964294daa8 *modem-telemetry-2.6.1-r0-x86_64-24.10.tar.gz
+668d58f62cc17ff3f8c67909b060405cb5d12552966c9000cca2cea0ee476184 *modem-telemetry-2.6.1-r0-x86_64-25.12.tar.gz
